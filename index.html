@@ -1,203 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jhpiego Vehicle Management System</title>
-    <style> 
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f4f4f4;
-      }
-      .header {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .header img {
-        max-width: 150px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-      }
-      table, th, td {
-        border: 1px solid #ddd;
-      }
-      th, td {
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-      input, select, button {
-        margin-bottom: 10px;
-        padding: 8px;
-        width: calc(100% - 20px);
-        box-sizing: border-box;
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        input[type="text"], input[type="password"], input[type="date"], input[type="time"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
     </style>
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-  </head>
-  <body>
-    <div class="header">
-      <img src="jhpiego_logo.png" alt="Jhpiego Logo" />
-      <h1>Jhpiego Vehicle Management System</h1>
-    </div>
+</head>
+<body>
 
-    <!-- Login Form -->
-    <div id="loginDiv">
+<div class="container">
+    <h1>Vehicle Management System</h1>
+
+    <!-- Login Section -->
+    <div id="loginSection">
         <h2>Login</h2>
-        <input type="email" id="email" placeholder="Enter Email"><br><br>
+        <input type="text" id="username" placeholder="Enter your email">
+        <input type="password" id="password" placeholder="Enter your password">
         <button onclick="login()">Login</button>
     </div>
 
-    <!-- System Main Interface -->
-    <div id="mainDiv" style="display:none;">
-        <button onclick="logout()">Logout</button>
+    <!-- Vehicle Management Section -->
+    <div id="vehicleSection" style="display:none;">
         <h2>Manage Vehicles</h2>
-        
-        <!-- Vehicle Management Table -->
-        <table id="vehicleTable">
+
+        <input type="text" id="vehicleRegistration" placeholder="Vehicle Registration">
+        <input type="text" id="projectName" placeholder="Project Name">
+        <select id="driverDropdown">
+            <option value="" disabled selected>Select Driver</option>
+            <option value="Driver A">Driver A</option>
+            <option value="Driver B">Driver B</option>
+            <option value="Driver C">Driver C</option>
+        </select>
+        <input type="date" id="startDate" placeholder="Start Date">
+        <input type="time" id="startTime" placeholder="Start Time">
+        <input type="date" id="endDate" placeholder="End Date">
+        <input type="time" id="endTime" placeholder="End Time">
+        <input type="text" id="destination" placeholder="Destination">
+        <select id="userDropdown">
+            <option value="" disabled selected>Assign to User</option>
+            <option value="user1@jhpiego.org">user1@jhpiego.org</option>
+            <option value="user2@jhpiego.org">user2@jhpiego.org</option>
+            <option value="user3@jhpiego.org">user3@jhpiego.org</option>
+        </select>
+        <button onclick="addVehicle()">Add Vehicle</button>
+
+        <h3>Vehicle List</h3>
+        <table>
             <thead>
-                <tr>
-                    <th>Vehicle Registration</th>
-                    <th>Project Name</th>
-                    <th>Driver</th>
-                    <th>Start Date</th>
-                    <th>Start Time</th>
-                    <th>End Date</th>
-                    <th>End Time</th>
-                    <th>Destination</th>
-                    <th>Assigned To</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th>Vehicle Registration</th>
+                <th>Project Name</th>
+                <th>Driver</th>
+                <th>Start Date</th>
+                <th>Start Time</th>
+                <th>End Date</th>
+                <th>End Time</th>
+                <th>Destination</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+            </tr>
             </thead>
-            <tbody>
-                <!-- Vehicle rows will be dynamically populated -->
+            <tbody id="vehicleTable">
+            <!-- Vehicles will be rendered here -->
             </tbody>
         </table>
-
-        <br>
-
-        <!-- Add New Vehicle Form -->
-        <h3>Add New Vehicle</h3>
-        <input type="text" id="vehicleRegistration" placeholder="Vehicle Reg">
-        <select id="projectDropdown"></select>
-        <select id="driverDropdown"></select>
-        <input type="date" id="startDate">
-        <input type="time" id="startTime">
-        <input type="date" id="endDate">
-        <input type="time" id="endTime">
-        <input type="text" id="destination" placeholder="Destination">
-        <select id="userDropdown"></select>
-        <button onclick="addVehicle()">Add Vehicle</button>
     </div>
+</div>
 
-    <script>
-        // Sample users with roles for the system
-        const users = [
-          { email: "TMokitimi@jhpiego.org", role: "user" },
-          { email: "MMatete@jhpiego.org", role: "user" },
-          { email: "TNtelane@jhpiego.org", role: "user" },
-          { email: "SMpalami@jhpiego.org", role: "user" },
-          { email: "MShoba@jhpiego.org", role: "user" },
-          { email: "TMolapo@jhpiego.org", role: "user" },
-          { email: "RSoothoane@jhpiego.org", role: "user" },
-          { email: "PMoshoeshoe@jhpiego.org", role: "user" },
-          { email: "MTuoane@jhpiego.org", role: "user" },
-          { email: "MNkongoane@jhpiego.org", role: "user" },
-          { email: "fleetmanager@jhpiego.org", role: "fleetManager" },
-        ];
+<script>
+    const users = [
+        { username: 'TMokitimi@jhpiego.org', password: 'password123' },
+        { username: 'MLichaba@jhpiego.org', password: 'password456' },
+        { username: 'TMokhele@jhpiego.org', password: 'password789' }
+    ];
 
-        // Sample projects for the system
-        const projects = [
-            'CUT-TB',
-            'RISE',
-            'MOSAIC',
-            'MATRIX'
-        ];
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const user = users.find(user => user.username === username && user.password === password);
 
-        // Sample drivers for the system
-        const drivers = [
-            'Kagiso',
-            'Mahloko',
-            'Makhaola'
-        ];
-
-        // State management for logged-in user and vehicles
-        let loggedInUser = null;
-        let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
-
-        // Load users, drivers, and projects into dropdowns
-        window.onload = () => {
-            const userDropdown = document.getElementById('userDropdown');
-            users.forEach(user => {
-                let option = document.createElement('option');
-                option.value = user.email;
-                option.innerText = user.email;
-                userDropdown.appendChild(option);
-            });
-
-            const driverDropdown = document.getElementById('driverDropdown');
-            drivers.forEach(driver => {
-                let option = document.createElement('option');
-                option.value = driver;
-                option.innerText = driver;
-                driverDropdown.appendChild(option);
-            });
-
-            const projectDropdown = document.getElementById('projectDropdown');
-            projects.forEach(project => {
-                let option = document.createElement('option');
-                option.value = project;
-                option.innerText = project;
-                projectDropdown.appendChild(option);
-            });
-
-            renderVehicles();
-        };
-
-        // Login function
-        function login() {
-            const email = document.getElementById('email').value;
-            const user = users.find(u => u.email === email);
-
-            if (user) {
-                loggedInUser = user;
-                document.getElementById('loginDiv').style.display = 'none';
-                document.getElementById('mainDiv').style.display = 'block';
-
-                if (user.role === 'fleetManager') {
-                    document.getElementById('mainDiv').classList.add('fleet-manager');
-                } else {
-                    document.getElementById('mainDiv').classList.remove('fleet-manager');
-                }
-            } else {
-                alert('Invalid email');
-            }
+        if (user) {
+            alert('Login successful!');
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('vehicleSection').style.display = 'block';
+        } else {
+            alert('Invalid login credentials. Please try again.');
         }
+    }
 
-        // Logout function
-        function logout() {
-            loggedInUser = null;
-            document.getElementById('loginDiv').style.display = 'block';
-            document.getElementById('mainDiv').style.display = 'none';
-        }
+    const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
 
-        // Function to render vehicles in the table
-        function renderVehicles() {
-            const tbody = document.querySelector('#vehicleTable tbody');
-            tbody.innerHTML = '';
-            vehicles.forEach((vehicle, index) => {
-                const tr = document.createElement('tr');
-
-                tr.innerHTML = `
+    function renderVehicles() {
+        const vehicleTable = document.getElementById('vehicleTable');
+        vehicleTable.innerHTML = '';
+        vehicles.forEach((vehicle, index) => {
+            vehicleTable.innerHTML += `
+                <tr>
                     <td>${vehicle.name}</td>
                     <td>${vehicle.project}</td>
                     <td>${vehicle.driver}</td>
@@ -208,72 +160,75 @@
                     <td>${vehicle.destination}</td>
                     <td>
                         <select onchange="updateAssignedUser(${index}, this.value)">
-                            ${users.map(user => `<option value="${user.email}" ${user.email === vehicle.assignedTo ? 'selected' : ''}>${user.email}</option>`).join('')}
+                            <option value="" disabled selected>${vehicle.assignedTo}</option>
+                            <option value="user1@jhpiego.org">user1@jhpiego.org</option>
+                            <option value="user2@jhpiego.org">user2@jhpiego.org</option>
+                            <option value="user3@jhpiego.org">user3@jhpiego.org</option>
                         </select>
                     </td>
                     <td>
                         <button onclick="editVehicle(${index})">Edit</button>
                         <button onclick="deleteVehicle(${index})">Delete</button>
                     </td>
-                `;
+                </tr>
+            `;
+        });
+    }
 
-                tbody.appendChild(tr);
-            });
-        }
+    function addVehicle() {
+        const vehicleRegistration = document.getElementById('vehicleRegistration').value;
+        const projectName = document.getElementById('projectName').value;
+        const driver = document.getElementById('driverDropdown').value;
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const endDate = document.getElementById('endDate').value;
+        const endTime = document.getElementById('endTime').value;
+        const destination = document.getElementById('destination').value;
+        const assignedTo = document.getElementById('userDropdown').value;
 
-        // Function to add a new vehicle
-        function addVehicle() {
-            const vehicleRegistration = document.getElementById('vehicleRegistration').value;
-            const projectName = document.getElementById('projectDropdown').value;
-            const driver = document.getElementById('driverDropdown').value;
-            const startDate = document.getElementById('startDate').value;
-            const startTime = document.getElementById('startTime').value;
-            const endDate = document.getElementById('endDate').value;
-            const endTime = document.getElementById('endTime').value;
-            const destination = document.getElementById('destination').value;
-            const assignedTo = document.getElementById('userDropdown').value;
+        vehicles.push({
+            name: vehicleRegistration,
+            project: projectName,
+            driver: driver,
+            startDate: startDate,
+            startTime: startTime,
+            endDate: endDate,
+            endTime: endTime,
+            destination: destination,
+            assignedTo: assignedTo
+        });
 
-            vehicles.push({
-                name: vehicleRegistration,
-                project: projectName,
-                driver: driver,
-                startDate: startDate,
-                startTime: startTime,
-                endDate: endDate,
-                endTime: endTime,
-                destination: destination,
-                assignedTo: assignedTo
-            });
+        localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        renderVehicles();
 
-            localStorage.setItem('vehicles', JSON.stringify(vehicles));
-            renderVehicles();
+        // Clear input fields
+        document.getElementById('vehicleRegistration').value = '';
+        document.getElementById('startDate').value = '';
+        document.getElementById('startTime').value = '';
+        document.getElementById('endDate').value = '';
+        document.getElementById('endTime').value = '';
+        document.getElementById('destination').value = '';
+    }
 
-            // Clear input fields
-            document.getElementById('vehicleRegistration').value = '';
-            document.getElementById('startDate').value = '';
-            document.getElementById('startTime').value = '';
-            document.getElementById('endDate').value = '';
-            document.getElementById('endTime').value = '';
-            document.getElementById('destination').value = '';
-        }
+    function updateAssignedUser(index, newUser) {
+        vehicles[index].assignedTo = newUser;
+        localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        renderVehicles();
+    }
 
-        // Function to update the assigned user for a vehicle
-        function updateAssignedUser(index, newUser) {
-            vehicles[index].assignedTo = newUser;
-            localStorage.setItem('vehicles', JSON.stringify(vehicles));
-        }
+    function deleteVehicle(index) {
+        vehicles.splice(index, 1);
+        localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        renderVehicles();
+    }
 
-        // Function to delete a vehicle
-        function deleteVehicle(index) {
-            vehicles.splice(index, 1);
-            localStorage.setItem('vehicles', JSON.stringify(vehicles));
-            renderVehicles();
-        }
+    function editVehicle(index) {
+        alert('Edit functionality can be expanded. Vehicle details: ' + JSON.stringify(vehicles[index]));
+    }
 
-        // Function to edit a vehicle (Note: For simplicity, just showing in alert. You can expand as needed.)
-        function editVehicle(index) {
-            alert('Edit functionality can be expanded. Vehicle details: ' + JSON.stringify(vehicles[index]));
-        }
-    </script>
-  </body>
+    // Initial render
+    renderVehicles();
+</script>
+
+</body>
 </html>
