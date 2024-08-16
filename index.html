@@ -35,13 +35,14 @@
         <table id="vehicleTable">
             <thead>
                 <tr>
-                    <th>Vehicle Name</th>
+                    <th>Vehicle Registration</th>
+                    <th>Project Name</th>
                     <th>Driver</th>
                     <th>Start Date</th>
                     <th>Start Time</th>
                     <th>End Date</th>
                     <th>End Time</th>
-                    <th>Destination</th> <!-- New Destination Column -->
+                    <th>Destination</th>
                     <th>Assigned To</th>
                     <th>Actions</th>
                 </tr>
@@ -55,15 +56,17 @@
 
         <!-- Add New Vehicle Form -->
         <h3>Add New Vehicle</h3>
-        <input type="text" id="vehicleName" placeholder="Vehicle Name">
+        <input type="text" id="vehicleRegistration" placeholder="Vehicle Reg">
         <select id="driverDropdown">
-            <!-- Drivers will be dynamically populated -->
+        </select>
+        <select id="projectDropdown">
         </select>
         <input type="date" id="startDate">
         <input type="time" id="startTime">
         <input type="date" id="endDate">
         <input type="time" id="endTime">
-        <input type="text" id="destination" placeholder="Destination"> <!-- New Destination Input -->
+        <input type="text" id="destination" placeholder="Destination">
+        <input type= "text" id="assignedTo" placeholde="Assignee">
         <button onclick="addVehicle()">Add Vehicle</button>
 
         <br><br>
@@ -77,17 +80,49 @@
     <script>
         // Sample users with roles for the system
         const users = [
-            { email: 'TMokitimi@jhpiego.org', password: 'password1', role: 'requester' },
-            { email: 'MLichaba@jhpiego.org', password: 'password2', role: 'requester' },
-            { email: 'TMokhele@jhpiego.org', password: 'password3', role: 'requester' },
-            { email: 'FleetManager@jhpiego.org', password: 'managerpassword', role: 'fleet_manager' }
+          { email: "TMokitimi@jhpiego.org", role: "user" },
+          { email: "MMatete@jhpiego.org", role: "user" },
+          { email: "TNtelane@jhpiego.org", role: "user" },
+          { email: "SMpalami@jhpiego.org", role: "user" },
+          { email: "MShoba@jhpiego.org", role: "user" },
+          { email: "TMolapo@jhpiego.org", role: "user" },
+          { email: "RSoothoane@jhpiego.org", role: "user" },
+          { email: "PMoshoeshoe@jhpiego.org", role: "user" },
+          { email: "MTuoane@jhpiego.org", role: "user" },
+          { email: "MNkongoane@jhpiego.org", role: "user" },
+          { email: "fleetmanager@jhpiego.org", role: "fleetManager" },
+        ];
+        let currentUser = { email: "", role: "" };
+        function generateId() {
+        return "_" + Math.random().toString(36).substr(2, 9);
+      }
+
+      // Initialize the system
+      function initialize() {
+        populateAdminVehicleTable();
+        populateUserVehicleTable();
+        populateMyRequestsTable();
+      }
+
+      // Login Handling
+      const loginForm = document.getElementById("loginForm");
+      const adminSection = document.getElementById("adminSection");
+      const userSection = document.getElementById("userSection");
+      const logoutButton = document.getElementById("logoutButton");
+  
+      // Sample projects for the system
+        const projects = [
+            'CUT-TB',
+            'RISE',
+            'MOSAIC'
+            'MATRIX'
         ];
 
-        // Sample drivers for the system
+      // Sample drivers for the system
         const drivers = [
-            'Driver 1',
-            'Driver 2',
-            'Driver 3'
+            'Kagiso',
+            'Mahloko',
+            'Makhaola'
         ];
 
         // State management for logged-in user and vehicles
@@ -153,13 +188,16 @@
                 const tr = document.createElement('tr');
 
                 tr.innerHTML = `
-                    <td>${vehicle.name}</td>
-                    <td>${vehicle.driver}</td>
-                    <td>${vehicle.startDate}</td>
-                    <td>${vehicle.startTime}</td>
-                    <td>${vehicle.endDate}</td>
-                    <td>${vehicle.endTime}</td>
-                    <td>${vehicle.destination}</td> <!-- New Destination Column -->
+                    <td>${vehicle Registration}</td>
+                    <td>$Project Name</td>
+                    <td>$Driver</td>
+                    <td>$Start Date</td>
+                    <td>$Start Time</td>
+                    <td>$End Date</td>
+                    <td>$End Time</td>
+                    <td>$Destination</td>
+                    <td>$Assigned To</td>
+                    <td>$Actions</td>
                     <td>
                         <select onchange="updateAssignedUser(${index}, this.value)">
                             ${users.filter(user => user.role === 'requester').map(user => `<option value="${user.email}" ${user.email === vehicle.assignedTo ? 'selected' : ''}>${user.email}</option>`).join('')}
@@ -178,23 +216,25 @@
         // Function to add a new vehicle
         function addVehicle() {
             const vehicleName = document.getElementById('vehicleName').value;
+            const projectName = document.getElementById('projectDropdown').value;
             const driver = document.getElementById('driverDropdown').value;
             const startDate = document.getElementById('startDate').value;
             const startTime = document.getElementById('startTime').value;
             const endDate = document.getElementById('endDate').value;
             const endTime = document.getElementById('endTime').value;
-            const destination = document.getElementById('destination').value; // New Destination Value
+            const destination = document.getElementById('destination').value;
             const assignedTo = document.getElementById('userDropdown').value;
 
-            if (vehicleName && driver && startDate && startTime && endDate && endTime && destination && assignedTo) {
+            if (vehicleName && projectName && driver && startDate && startTime && endDate && endTime && destination && assignedTo) {
                 vehicles.push({
                     name: vehicleName,
+                    project: projectName,
                     driver: driver,
                     startDate: startDate,
                     startTime: startTime,
                     endDate: endDate,
                     endTime: endTime,
-                    destination: destination, // Include destination in the vehicle object
+                    destination: destination,
                     assignedTo: assignedTo
                 });
                 localStorage.setItem('vehicles', JSON.stringify(vehicles));
@@ -214,6 +254,7 @@
         function editVehicle(index) {
             const vehicle = vehicles[index];
             document.getElementById('vehicleName').value = vehicle.name;
+            document.getElementById('projectDropdown').value = vehicle.project;
             document.getElementById('driverDropdown').value = vehicle.driver;
             document.getElementById('startDate').value = vehicle.startDate;
             document.getElementById('startTime').value = vehicle.startTime;
