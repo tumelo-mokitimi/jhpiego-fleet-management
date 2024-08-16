@@ -24,10 +24,14 @@
 
     <h1>Vehicle Management System</h1>
 
+    <!-- Logo Image -->
+    <img src="jhpiego_logo.png" alt="Jhpiego Logo" style="width:150px;">
+
     <!-- Login Form -->
     <div id="loginDiv">
         <h2>Login</h2>
         <input type="email" id="email" placeholder="Enter Email"><br><br>
+        <input type="password" id="password" placeholder="Enter Password"><br><br>
         <button onclick="login()">Login</button>
     </div>
 
@@ -78,11 +82,12 @@
     </div>
 
     <script>
-        // Sample users for the system
+        // Sample users with roles for the system
         const users = [
-            'TMokitimi@jhpiego.org',
-            'MLichaba@jhpiego.org',
-            'TMokhele@jhpiego.org'
+            { email: 'TMokitimi@jhpiego.org', password: 'password1', role: 'requester' },
+            { email: 'MLichaba@jhpiego.org', password: 'password2', role: 'requester' },
+            { email: 'TMokhele@jhpiego.org', password: 'password3', role: 'requester' },
+            { email: 'FleetManager@jhpiego.org', password: 'managerpassword', role: 'fleet_manager' }
         ];
 
         // Sample drivers for the system
@@ -100,10 +105,12 @@
         window.onload = () => {
             const userDropdown = document.getElementById('userDropdown');
             users.forEach(user => {
-                let option = document.createElement('option');
-                option.value = user;
-                option.innerText = user;
-                userDropdown.appendChild(option);
+                if (user.role === 'requester') {
+                    let option = document.createElement('option');
+                    option.value = user.email;
+                    option.innerText = user.email;
+                    userDropdown.appendChild(option);
+                }
             });
 
             const driverDropdown = document.getElementById('driverDropdown');
@@ -120,12 +127,21 @@
         // Login function
         function login() {
             const email = document.getElementById('email').value;
-            if (users.includes(email)) {
-                loggedInUser = email;
+            const password = document.getElementById('password').value;
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                loggedInUser = user;
                 document.getElementById('loginDiv').style.display = 'none';
                 document.getElementById('mainDiv').style.display = 'block';
+
+                if (user.role === 'fleet_manager') {
+                    document.getElementById('mainDiv').classList.add('fleet-manager');
+                } else {
+                    document.getElementById('mainDiv').classList.remove('fleet-manager');
+                }
             } else {
-                alert('Invalid email address');
+                alert('Invalid email or password');
             }
         }
 
@@ -152,7 +168,7 @@
                     <td>${vehicle.endTime}</td>
                     <td>
                         <select onchange="updateAssignedUser(${index}, this.value)">
-                            ${users.map(user => `<option value="${user}" ${user === vehicle.assignedTo ? 'selected' : ''}>${user}</option>`).join('')}
+                            ${users.filter(user => user.role === 'requester').map(user => `<option value="${user.email}" ${user.email === vehicle.assignedTo ? 'selected' : ''}>${user.email}</option>`).join('')}
                         </select>
                     </td>
                     <td>
