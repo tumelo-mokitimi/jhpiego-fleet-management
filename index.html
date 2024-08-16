@@ -1,83 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jhpiego Vehicle Management System</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management System</title>
+    
+    <!-- jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 20px;
-      }
-      .header {
-        display: flex;
-        align-items: center;
-      }
-      .header img {
-        width: auto;
-        height: auto;
-        margin-right: 35px;
-      }
-      .header h1 {
-        margin: 0;
-        color: #000000;
-      }
-      form,
-      .section {
-        margin-bottom: 20px;
-        padding: 20px;
-        background-color: #f2f2f2;
-        border-radius: 25px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      input,
-      button,
-      select {
-        margin: 5px 0;
-        padding: 10px;
-        width: 100%;
-        border: 1px solid #efefef;
-        border-radius: 5px;
-        box-sizing: border-box;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid #ddd;
-      }
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-      }
-      button {
-        background-color: #016a63;
-        color: white;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #039b91;
-      }
-      .button-group button {
-        width: auto;
-        margin-right: 5px;
-      }
-      .hidden {
-        display: none;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        input[type="text"], input[type="password"], input[type="date"], input[type="time"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
     </style>
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-  </head>
+</head>
 <body>
 
 <div class="container">
@@ -88,7 +63,7 @@
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Enter your email">
         <input type="password" id="password" placeholder="Enter your password">
-        <button onclick="login()">Login</button>
+        <button id="loginButton">Login</button>
     </div>
 
     <!-- Vehicle Management Section -->
@@ -114,7 +89,7 @@
             <option value="user2@jhpiego.org">user2@jhpiego.org</option>
             <option value="user3@jhpiego.org">user3@jhpiego.org</option>
         </select>
-        <button onclick="addVehicle()">Add Vehicle</button>
+        <button id="addVehicleButton">Add Vehicle</button>
 
         <h3>Vehicle List</h3>
         <table>
@@ -140,112 +115,118 @@
 </div>
 
 <script>
-    const users = [
-        { username: 'TMokitimi@jhpiego.org', password: 'password123' },
-        { username: 'MLichaba@jhpiego.org', password: 'password456' },
-        { username: 'TMokhele@jhpiego.org', password: 'password789' }
-    ];
+    $(function() {
+        // Apply jQuery UI themes to buttons and inputs
+        $("input[type='text'], input[type='password'], input[type='date'], input[type='time'], select").addClass("ui-widget ui-widget-content ui-corner-all");
+        $("button").button();
 
-    function login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const user = users.find(user => user.username === username && user.password === password);
+        const users = [
+            { username: 'TMokitimi@jhpiego.org', password: 'password123' },
+            { username: 'MLichaba@jhpiego.org', password: 'password456' },
+            { username: 'TMokhele@jhpiego.org', password: 'password789' }
+        ];
 
-        if (user) {
-            alert('Login successful!');
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('vehicleSection').style.display = 'block';
-        } else {
-            alert('Invalid login credentials. Please try again.');
+        $("#loginButton").click(function() {
+            const username = $("#username").val();
+            const password = $("#password").val();
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                alert('Login successful!');
+                $("#loginSection").hide();
+                $("#vehicleSection").show();
+            } else {
+                alert('Invalid login credentials. Please try again.');
+            }
+        });
+
+        const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+
+        function renderVehicles() {
+            const vehicleTable = $("#vehicleTable");
+            vehicleTable.empty();
+            vehicles.forEach((vehicle, index) => {
+                vehicleTable.append(`
+                    <tr>
+                        <td>${vehicle.name}</td>
+                        <td>${vehicle.project}</td>
+                        <td>${vehicle.driver}</td>
+                        <td>${vehicle.startDate}</td>
+                        <td>${vehicle.startTime}</td>
+                        <td>${vehicle.endDate}</td>
+                        <td>${vehicle.endTime}</td>
+                        <td>${vehicle.destination}</td>
+                        <td>
+                            <select onchange="updateAssignedUser(${index}, this.value)">
+                                <option value="" disabled selected>${vehicle.assignedTo}</option>
+                                <option value="user1@jhpiego.org">user1@jhpiego.org</option>
+                                <option value="user2@jhpiego.org">user2@jhpiego.org</option>
+                                <option value="user3@jhpiego.org">user3@jhpiego.org</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button onclick="editVehicle(${index})">Edit</button>
+                            <button onclick="deleteVehicle(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `);
+            });
         }
-    }
 
-    const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+        $("#addVehicleButton").click(function() {
+            const vehicleRegistration = $("#vehicleRegistration").val();
+            const projectName = $("#projectName").val();
+            const driver = $("#driverDropdown").val();
+            const startDate = $("#startDate").val();
+            const startTime = $("#startTime").val();
+            const endDate = $("#endDate").val();
+            const endTime = $("#endTime").val();
+            const destination = $("#destination").val();
+            const assignedTo = $("#userDropdown").val();
 
-    function renderVehicles() {
-        const vehicleTable = document.getElementById('vehicleTable');
-        vehicleTable.innerHTML = '';
-        vehicles.forEach((vehicle, index) => {
-            vehicleTable.innerHTML += `
-                <tr>
-                    <td>${vehicle.name}</td>
-                    <td>${vehicle.project}</td>
-                    <td>${vehicle.driver}</td>
-                    <td>${vehicle.startDate}</td>
-                    <td>${vehicle.startTime}</td>
-                    <td>${vehicle.endDate}</td>
-                    <td>${vehicle.endTime}</td>
-                    <td>${vehicle.destination}</td>
-                    <td>
-                        <select onchange="updateAssignedUser(${index}, this.value)">
-                            <option value="" disabled selected>${vehicle.assignedTo}</option>
-                            <option value="user1@jhpiego.org">user1@jhpiego.org</option>
-                            <option value="user2@jhpiego.org">user2@jhpiego.org</option>
-                            <option value="user3@jhpiego.org">user3@jhpiego.org</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button onclick="editVehicle(${index})">Edit</button>
-                        <button onclick="deleteVehicle(${index})">Delete</button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
+            vehicles.push({
+                name: vehicleRegistration,
+                project: projectName,
+                driver: driver,
+                startDate: startDate,
+                startTime: startTime,
+                endDate: endDate,
+                endTime: endTime,
+                destination: destination,
+                assignedTo: assignedTo
+            });
 
-    function addVehicle() {
-        const vehicleRegistration = document.getElementById('vehicleRegistration').value;
-        const projectName = document.getElementById('projectName').value;
-        const driver = document.getElementById('driverDropdown').value;
-        const startDate = document.getElementById('startDate').value;
-        const startTime = document.getElementById('startTime').value;
-        const endDate = document.getElementById('endDate').value;
-        const endTime = document.getElementById('endTime').value;
-        const destination = document.getElementById('destination').value;
-        const assignedTo = document.getElementById('userDropdown').value;
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+            renderVehicles();
 
-        vehicles.push({
-            name: vehicleRegistration,
-            project: projectName,
-            driver: driver,
-            startDate: startDate,
-            startTime: startTime,
-            endDate: endDate,
-            endTime: endTime,
-            destination: destination,
-            assignedTo: assignedTo
+            // Clear input fields
+            $("#vehicleRegistration").val('');
+            $("#startDate").val('');
+            $("#startTime").val('');
+            $("#endDate").val('');
+            $("#endTime").val('');
+            $("#destination").val('');
         });
 
-        localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        window.updateAssignedUser = function(index, newUser) {
+            vehicles[index].assignedTo = newUser;
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+            renderVehicles();
+        };
+
+        window.deleteVehicle = function(index) {
+            vehicles.splice(index, 1);
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+            renderVehicles();
+        };
+
+        window.editVehicle = function(index) {
+            alert('Edit functionality can be expanded. Vehicle details: ' + JSON.stringify(vehicles[index]));
+        };
+
+        // Initial render
         renderVehicles();
-
-        // Clear input fields
-        document.getElementById('vehicleRegistration').value = '';
-        document.getElementById('startDate').value = '';
-        document.getElementById('startTime').value = '';
-        document.getElementById('endDate').value = '';
-        document.getElementById('endTime').value = '';
-        document.getElementById('destination').value = '';
-    }
-
-    function updateAssignedUser(index, newUser) {
-        vehicles[index].assignedTo = newUser;
-        localStorage.setItem('vehicles', JSON.stringify(vehicles));
-        renderVehicles();
-    }
-
-    function deleteVehicle(index) {
-        vehicles.splice(index, 1);
-        localStorage.setItem('vehicles', JSON.stringify(vehicles));
-        renderVehicles();
-    }
-
-    function editVehicle(index) {
-        alert('Edit functionality can be expanded. Vehicle details: ' + JSON.stringify(vehicles[index]));
-    }
-
-    // Initial render
-    renderVehicles();
+    });
 </script>
 
 </body>
