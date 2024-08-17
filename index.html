@@ -1,243 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jhpiego Vehicle Management System</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 20px;
-      }
-      .header {
-        display: flex;
-        align-items: center;
-      }
-      .header img {
-        width: auto;
-        height: auto;
-        margin-right: 35px;
-      }
-      .header h1 {
-        margin: 0;
-        color: #000000;
-      }
-      form,
-      .section {
-        margin-bottom: 20px;
-        padding: 20px;
-        background-color: #f2f2f2;
-        border-radius: 25px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      input,
-      button,
-      select {
-        margin: 5px 0;
-        padding: 10px;
-        width: 100%;
-        border: 1px solid #efefef;
-        border-radius: 5px;
-        box-sizing: border-box;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid #ddd;
-      }
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-      }
-      button {
-        background-color: #016a63;
-        color: white;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #039b91;
-      }
-      .button-group button {
-        width: auto;
-        margin-right: 5px;
-      }
-      .hidden {
-        display: none;
-      }
+        /* Add your CSS styles here */
     </style>
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-  </head>
-  <body>
-    <div class="header">
-      <img src="jhpiego_logo.png" alt="Jhpiego Logo" />
-      <h1>Jhpiego Vehicle Management System</h1>
-    </div>
-    <!-- Login Page -->
-    <div id="loginPage">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
+</head>
+<body>
+    <h1>Vehicle Management</h1>
+    <form id="vehicleForm">
+        <input type="hidden" id="vehicleId">
+        <label for="vehicleMake">Make:</label>
+        <input type="text" id="vehicleMake" required>
+        <label for="vehicleModel">Model:</label>
+        <input type="text" id="vehicleModel" required>
+        <label for="vehicleRegistration">Registration:</label>
+        <input type="text" id="vehicleRegistration" required>
+        <label for="projectName">Project Name:</label>
+        <input type="text" id="projectName" required>
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" required>
+        <label for="startDate">Start Date:</label>
+        <input type="text" id="startDate" required>
+        <label for="startTime">Start Time:</label>
+        <input type="time" id="startTime" required>
+        <label for="endDate">End Date:</label>
+        <input type="text" id="endDate" required>
+        <label for="endTime">End Time:</label>
+        <input type="time" id="endTime" required>
+        <label for="driver">Driver:</label>
+        <select id="driver" required>
+            <!-- Add driver options here -->
+        </select>
+        <button type="submit">Save Vehicle</button>
+    </form>
 
-    <!-- Dashboard -->
-    <div id="dashboard">
-        <h2>Dashboard</h2>
-        <button id="logoutButton">Logout</button>
-        <div id="vehicleSection">
-            <h3>Add Vehicle</h3>
-            <form id="addVehicleForm">
-                <label for="vehicleMake">Make:</label>
-                <input type="text" id="vehicleMake" required>
-                <label for="vehicleModel">Model:</label>
-                <input type="text" id="vehicleModel" required>
-                <label for="vehicleRegistration">Registration:</label>
-                <input type="text" id="vehicleRegistration" required>
-                <label for="projectName">Project Name:</label>
-                <select id="projectName" required>
-                    <option value="">Select ProjectName</option>
-                    <option value="CUT-TB">CUT-TB</option>
-                    <option value="RISE">RISE</option>
-                </select>
-                <label for="destination">Destination:</label>
-                <input type="text" id="destination" required>
-                <label for="startDate">Start Date:</label>
-                <input type="text" id="startDate" required>
-                <label for="startTime">Start Time:</label>
-                <input type="time" id="startTime" required>
-                <label for="endDate">End Date:</label>
-                <input type="text" id="endDate" required>
-                <label for="endTime">End Time:</label>
-                <input type="time" id="endTime" required>
-                <label for="driver">Driver:</label>
-                <select id="driver" required>
-                    <option value="">Select Driver</option>
-                    <option value="Mahloko">Mahloko</option>
-                    <option value="Mokone">Mokone</option>
-                </select>
-                <button type="submit">Add Vehicle</button>
-            </form>
-
-            <h3>Vehicle List</h3>
-            <table id="vehicleTable">
-                <thead>
-                    <tr>
-                        <th>Make</th>
-                        <th>Model</th>
-                        <th>Registration</th>
-                        <th>Project Name</th>
-                        <th>Destination</th>
-                        <th>Start Date</th>
-                        <th>Start Time</th>
-                        <th>End Date</th>
-                        <th>End Time</th>
-                        <th>Driver</th>
-                        <th>Assigned To</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+    <h2>Vehicles</h2>
+    <table id="vehicleTable">
+        <thead>
+            <tr>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Registration</th>
+                <th>Project Name</th>
+                <th>Destination</th>
+                <th>Start Date</th>
+                <th>Start Time</th>
+                <th>End Date</th>
+                <th>End Time</th>
+                <th>Driver</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Vehicle rows will be added here dynamically -->
+        </tbody>
+    </table>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
-        // Initialize system
-        const users = [
-            { email: "LRankhethoa@jhpiego.org", password: "adminpass", role: "admin" },
-            { email: "TMokitimi@jhpiego.org", password: "password1", role: "user" },
-            { email: "MMatete@jhpiego.org", password: "password2", role: "user" },
-            { email: "TNtelane@jhpiego.org", password: "password3", role: "user" },
-            { email: "user@jhpiego.org", password: "userpass", role: "user" }
-        ];
         let vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
-        let currentUser = JSON.parse(localStorage.getItem("currentUser")) || { email: "", role: "" };
+        const users = [
+            { email: "TMokitimi@jhpiego.org" },
+            { email: "MLichaba@jhpiego.org" },
+            { email: "TMokhele@jhpiego.org" }
+        ];
 
+        // Initialize
         function initialize() {
-            const loginPage = document.getElementById("loginPage");
-            const dashboard = document.getElementById("dashboard");
-
-            // Hide all pages initially
-            loginPage.style.display = "none";
-            dashboard.style.display = "none";
-
-            // Show login page if no user is logged in
-            if (!currentUser.email) {
-                loginPage.style.display = "block";
-            } else {
-                dashboard.style.display = "block";
-                populateVehicleTable();
-            }
+            populateVehicleTable();
+            document.getElementById("vehicleForm").addEventListener("submit", saveVehicle);
         }
 
-        // Login handling
-        const loginForm = document.getElementById("loginForm");
-        loginForm.addEventListener("submit", function (event) {
+        // Save Vehicle
+        function saveVehicle(event) {
             event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const user = users.find(u => u.email === email && u.password === password);
-            if (user) {
-                currentUser = { email: user.email, role: user.role };
-                localStorage.setItem("currentUser", JSON.stringify(currentUser));
-                initialize();
-            } else {
-                alert("Invalid credentials. Please try again.");
-            }
-        });
 
-        // Logout handling
-        const logoutButton = document.getElementById("logoutButton");
-        logoutButton.addEventListener("click", function () {
-            currentUser = { email: "", role: "" };
-            localStorage.removeItem("currentUser");
-            initialize();
-        });
-
-        // Add Vehicle Handling
-        const addVehicleForm = document.getElementById("addVehicleForm");
-        addVehicleForm.addEventListener("submit", function (event) {
-            event.preventDefault();
+            const vehicleId = document.getElementById("vehicleId").value;
             const vehicle = {
-                id: generateId(),
-                make: document.getElementById("vehicleMake").value.trim(),
-                model: document.getElementById("vehicleModel").value.trim(),
-                registration: document.getElementById("vehicleRegistration").value.trim(),
-                projectName: document.getElementById("projectName").value.trim(),
-                destination: document.getElementById("destination").value.trim(),
+                id: vehicleId ? parseInt(vehicleId) : Date.now(),
+                make: document.getElementById("vehicleMake").value,
+                model: document.getElementById("vehicleModel").value,
+                registration: document.getElementById("vehicleRegistration").value,
+                projectName: document.getElementById("projectName").value,
+                destination: document.getElementById("destination").value,
                 startDate: document.getElementById("startDate").value,
                 startTime: document.getElementById("startTime").value,
                 endDate: document.getElementById("endDate").value,
                 endTime: document.getElementById("endTime").value,
                 driver: document.getElementById("driver").value,
-                assignedTo: ""
+                assignedTo: document.querySelector("#vehicleForm select#driver").value
             };
-            vehicles.push(vehicle);
-            localStorage.setItem("vehicles", JSON.stringify(vehicles));
-            addVehicleForm.reset();
-            populateVehicleTable();
-        });
 
-        // Generate a unique ID for each vehicle
-        function generateId() {
-            return '_' + Math.random().toString(36).substr(2, 9);
+            if (vehicleId) {
+                vehicles = vehicles.map(v => v.id === vehicle.id ? vehicle : v);
+            } else {
+                vehicles.push(vehicle);
+            }
+
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+            populateVehicleTable();
+            document.getElementById("vehicleForm").reset();
+            document.getElementById("vehicleId").value = "";
         }
 
         // Populate Vehicle Table
@@ -302,6 +171,7 @@
         function editVehicle(vehicleId) {
             const vehicle = vehicles.find(vehicle => vehicle.id === vehicleId);
             if (vehicle) {
+                document.getElementById("vehicleId").value = vehicle.id;
                 document.getElementById("vehicleMake").value = vehicle.make;
                 document.getElementById("vehicleModel").value = vehicle.model;
                 document.getElementById("vehicleRegistration").value = vehicle.registration;
@@ -312,11 +182,6 @@
                 document.getElementById("endDate").value = vehicle.endDate;
                 document.getElementById("endTime").value = vehicle.endTime;
                 document.getElementById("driver").value = vehicle.driver;
-
-                // Remove the vehicle to update it after form submission
-                vehicles = vehicles.filter(vehicle => vehicle.id !== vehicleId);
-                localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                populateVehicleTable();
             }
         }
 
@@ -339,5 +204,5 @@
         // Initial load
         initialize();
     </script>
-  </body>
+</body>
 </html>
