@@ -1,494 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jhpiego Vehicle Management System</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management System</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 20px;
-      }
-      .header {
-        display: flex;
-        align-items: center;
-      }
-      .header img {
-        width: auto;
-        height: auto;
-        margin-right: 35px;
-      }
-      .header h1 {
-        margin: 0;
-        color: #000000;
-      }
-      form,
-      .section {
-        margin-bottom: 20px;
-        padding: 20px;
-        background-color: #f2f2f2;
-        border-radius: 25px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      input,
-      button,
-      select {
-        margin: 5px 0;
-        padding: 10px;
-        width: 100%;
-        border: 1px solid #efefef;
-        border-radius: 5px;
-        box-sizing: border-box;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid #ddd;
-      }
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-      }
-      button {
-        background-color: #016a63;
-        color: white;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #039b91;
-      }
-      .button-group button {
-        width: auto;
-        margin-right: 5px;
-      }
-      .hidden {
-        display: none;
-      }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .hidden {
+            display: none;
+        }
+        #loginPage, #adminPage, #userPage {
+            display: none;
+        }
     </style>
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-  </head>
-  <body>
-    <div class="header">
-      <img src="jhpiego_logo.png" alt="Jhpiego Logo" />
-      <h1>Jhpiego Vehicle Management System</h1>
-    </div>
-
-    <!-- Login Form -->
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Enter your email" required />
-      <input
-        type="password"
-        id="password"
-        placeholder="Enter your password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
-
-    <button id="logoutButton" class="hidden">Logout</button>
-
-    <!-- Admin Section -->
-    <div id="adminSection" class="hidden">
-      <!-- Add Vehicle Form -->
-      <div class="section">
-        <h2>Add New Vehicle</h2>
-        <form id="addVehicleForm">
-          <input
-            type="text"
-            id="vehicleMake"
-            placeholder="Vehicle Make"
-            required
-          />
-          <input
-            type="text"
-            id="vehicleModel"
-            placeholder="Vehicle Model"
-            required
-          />
-          <input
-            type="text"
-            id="vehicleRegistration"
-            placeholder="Vehicle Registration"
-            required
-          />
-          <select id="projectName" required>
-            <option value="" disabled selected>Select Project</option>
-            <option value="CUT-TB">CUT-TB</option>
-            <option value="MOSAIC">MOSAIC</option>
-            <option value="RISE">RISE</option>
-            <option value="MATRIX">MATRIX</option>
-          </select>
-          <input type="date" id="startDate" placeholder="Start Date" required />
-          <input type="time" id="startTime" placeholder="Start Time" required />
-          <input type="date" id="endDate" placeholder="End Date" required />
-          <input type="time" id="endTime" placeholder="End Time" required />
-          <button type="submit">Add Vehicle</button>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
         </form>
-      </div>
-
-      <!-- Vehicle List with Driver and Assigned User -->
-      <div class="section">
-        <h2>Vehicle List</h2>
-        <table id="adminVehicleTable">
-          <thead>
-            <tr>
-              <th>Make</th>
-              <th>Model</th>
-              <th>Registration</th>
-              <th>Project</th>
-              <th>Start Date</th>
-              <th>Start Time</th>
-              <th>End Date</th>
-              <th>End Time</th>
-              <th>Driver</th>
-              <th>Assigned To</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Vehicles will be populated here -->
-          </tbody>
-        </table>
-      </div>
     </div>
 
-    <!-- User Section -->
-    <div id="userSection" class="hidden">
-      <!-- Available Vehicles -->
-      <div class="section">
-        <h2>Available Vehicles</h2>
-        <table id="userVehicleTable">
-          <thead>
-            <tr>
-              <th>Make</th>
-              <th>Model</th>
-              <th>Registration</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Available vehicles will be populated here -->
-          </tbody>
-        </table>
-      </div>
+    <!-- Admin Page -->
+    <div id="adminPage">
+        <h2>Admin Dashboard</h2>
+        <button id="logoutButton">Logout</button>
+        <div id="adminSection">
+            <h3>Add Vehicle</h3>
+            <form id="addVehicleForm">
+                <label for="vehicleMake">Make:</label>
+                <input type="text" id="vehicleMake" required>
+                <label for="vehicleModel">Model:</label>
+                <input type="text" id="vehicleModel" required>
+                <label for="vehicleRegistration">Registration:</label>
+                <input type="text" id="vehicleRegistration" required>
+                <label for="projectName">Project Name:</label>
+                <input type="text" id="projectName" required>
+                <label for="startDate">Start Date:</label>
+                <input type="text" id="startDate" required>
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" required>
+                <label for="endDate">End Date:</label>
+                <input type="text" id="endDate" required>
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime" required>
+                <button type="submit">Add Vehicle</button>
+            </form>
 
-      <!-- My Requests -->
-      <div class="section">
-        <h2>My Requests</h2>
-        <table id="myRequestsTable">
-          <thead>
-            <tr>
-              <th>Vehicle</th>
-              <th>Status</th>
-              <th>Assigned Driver</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- User's requests will be populated here -->
-          </tbody>
-        </table>
-      </div>
+            <h3>Vehicle List</h3>
+            <table id="adminVehicleTable">
+                <thead>
+                    <tr>
+                        <th>Make</th>
+                        <th>Model</th>
+                        <th>Registration</th>
+                        <th>Project Name</th>
+                        <th>Start Date</th>
+                        <th>Start Time</th>
+                        <th>End Date</th>
+                        <th>End Time</th>
+                        <th>Driver</th>
+                        <th>Assigned To</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Page -->
+    <div id="userPage">
+        <h2>User Dashboard</h2>
+        <button id="logoutButtonUser">Logout</button>
+        <div id="userSection">
+            <h3>Available Vehicles</h3>
+            <table id="userVehicleTable">
+                <thead>
+                    <tr>
+                        <th>Make</th>
+                        <th>Model</th>
+                        <th>Registration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h3>My Requests</h3>
+            <table id="myRequestsTable">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Status</th>
+                        <th>Assigned Driver</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
-      // Data Structures
-      const vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
-      const requests = JSON.parse(localStorage.getItem("requests")) || [];
-      const users = [
-        { email: "TMokitimi@jhpiego.org", role: "user" },
-        { email: "MMatete@jhpiego.org", role: "user" },
-        { email: "TNtelane@jhpiego.org", role: "user" },
-        { email: "SMpalami@jhpiego.org", role: "user" },
-        { email: "MShoba@jhpiego.org", role: "user" },
-        { email: "TMolapo@jhpiego.org", role: "user" },
-        { email: "RSoothoane@jhpiego.org", role: "user" },
-        { email: "PMoshoeshoe@jhpiego.org", role: "user" },
-        { email: "MTuoane@jhpiego.org", role: "user" },
-        { email: "MNkongoane@jhpiego.org", role: "user" },
-        { email: "fleetmanager@jhpiego.org", role: "fleetManager" },
-      ];
-      let currentUser = { email: "", role: "" };
+        // Initialize system
+        const users = [
+            { email: "TMokitimi@jhpiego.org", password: "password123", role: "admin" },
+            { email: "user@jhpiego.org", password: "userpass", role: "user" }
+        ];
+        let vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
+        let requests = JSON.parse(localStorage.getItem("requests")) || [];
+        let currentUser = { email: "", role: "" };
 
-      // Utility Functions
-      function generateId() {
-        return "_" + Math.random().toString(36).substr(2, 9);
-      }
+        function initialize() {
+            const loginPage = document.getElementById("loginPage");
+            const adminPage = document.getElementById("adminPage");
+            const userPage = document.getElementById("userPage");
 
-      // Initialize the system
-      function initialize() {
-        populateAdminVehicleTable();
-        populateUserVehicleTable();
-        populateMyRequestsTable();
-      }
+            // Hide all pages initially
+            loginPage.style.display = "none";
+            adminPage.style.display = "none";
+            userPage.style.display = "none";
 
-      // Login Handling
-      const loginForm = document.getElementById("loginForm");
-      const adminSection = document.getElementById("adminSection");
-      const userSection = document.getElementById("userSection");
-      const logoutButton = document.getElementById("logoutButton");
-
-      loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const emailInput = document.getElementById("email").value.trim();
-        const passwordInput = document.getElementById("password").value.trim();
-
-        if (!emailInput.endsWith("@jhpiego.org")) {
-          alert("Only @jhpiego.org emails are allowed.");
-          return;
-        }
-
-        currentUser.email = emailInput;
-        const user = users.find((u) => u.email === emailInput);
-
-        if (!user || passwordInput !== "password") {
-          alert("Invalid credentials.");
-          return;
-        }
-
-        currentUser.role = user.role;
-        if (currentUser.role === "fleetManager") {
-          adminSection.classList.remove("hidden");
-          userSection.classList.add("hidden");
-          populateAdminVehicleTable();
-        } else {
-          userSection.classList.remove("hidden");
-          adminSection.classList.add("hidden");
-          populateUserVehicleTable();
-          populateMyRequestsTable();
-        }
-
-        loginForm.classList.add("hidden");
-        logoutButton.classList.remove("hidden");
-      });
-
-      logoutButton.addEventListener("click", function () {
-        currentUser = { email: "", role: "" };
-        loginForm.classList.remove("hidden");
-        logoutButton.classList.add("hidden");
-        adminSection.classList.add("hidden");
-        userSection.classList.add("hidden");
-      });
-
-      // Add Vehicle Handling
-      const addVehicleForm = document.getElementById("addVehicleForm");
-      addVehicleForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const vehicle = {
-          id: generateId(),
-          make: document.getElementById("vehicleMake").value.trim(),
-          model: document.getElementById("vehicleModel").value.trim(),
-          registration: document
-            .getElementById("vehicleRegistration")
-            .value.trim(),
-          projectName: document.getElementById("projectName").value,
-          startDate: document.getElementById("startDate").value,
-          startTime: document.getElementById("startTime").value,
-          endDate: document.getElementById("endDate").value,
-          endTime: document.getElementById("endTime").value,
-          driver: "",
-          assignedTo: "",
-        };
-
-        vehicles.push(vehicle);
-        localStorage.setItem("vehicles", JSON.stringify(vehicles));
-        addVehicleForm.reset();
-        populateAdminVehicleTable();
-      });
-
-      // Populate Admin Vehicle Table
-      function populateAdminVehicleTable() {
-        const adminVehicleTableBody = document.querySelector(
-          "#adminVehicleTable tbody"
-        );
-        adminVehicleTableBody.innerHTML = "";
-
-        vehicles.forEach((vehicle) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-          <td>${vehicle.make}</td>
-          <td>${vehicle.model}</td>
-          <td>${vehicle.registration}</td>
-          <td>${vehicle.projectName}</td>
-          <td>${vehicle.startDate}</td>
-          <td>${vehicle.startTime}</td>
-          <td>${vehicle.endDate}</td>
-          <td>${vehicle.endTime}</td>
-          <td>
-            <select data-vehicle-id="${vehicle.id}" class="driver-select">
-              <option value="">Select Driver</option>
-              ${users
-                .filter((u) => u.role === "fleetManager")
-                .map(
-                  (u) =>
-                    `<option value="${u.email}" ${
-                      u.email === vehicle.driver ? "selected" : ""
-                    }>${u.email}</option>`
-                )
-                .join("")}
-            </select>
-          </td>
-          <td>
-            <select data-vehicle-id="${vehicle.id}" class="assigned-to-select">
-              <option value="">Select User</option>
-              ${users
-                .filter((u) => u.role === "user")
-                .map(
-                  (u) =>
-                    `<option value="${u.email}" ${
-                      u.email === vehicle.assignedTo ? "selected" : ""
-                    }>${u.email}</option>`
-                )
-                .join("")}
-            </select>
-          </td>
-          <td>
-            <div class="button-group">
-              <button class="edit-button" data-id="${vehicle.id}">Edit</button>
-              <button class="delete-button" data-id="${vehicle.id}">Delete</button>
-            </div>
-          </td>
-        `;
-          adminVehicleTableBody.appendChild(row);
-        });
-
-        // Event listeners for the dropdowns
-        document.querySelectorAll(".driver-select").forEach((select) => {
-          select.addEventListener("change", function () {
-            const vehicleId = this.getAttribute("data-vehicle-id");
-            const selectedDriver = this.value;
-            const vehicle = vehicles.find((v) => v.id === vehicleId);
-            vehicle.driver = selectedDriver;
-            localStorage.setItem("vehicles", JSON.stringify(vehicles));
-          });
-        });
-
-        document.querySelectorAll(".assigned-to-select").forEach((select) => {
-          select.addEventListener("change", function () {
-            const vehicleId = this.getAttribute("data-vehicle-id");
-            const selectedUser = this.value;
-            const vehicle = vehicles.find((v) => v.id === vehicleId);
-            vehicle.assignedTo = selectedUser;
-            localStorage.setItem("vehicles", JSON.stringify(vehicles));
-          });
-        });
-
-        // Event listeners for edit and delete buttons
-        document.querySelectorAll(".edit-button").forEach((button) => {
-          button.addEventListener("click", function () {
-            const vehicleId = this.getAttribute("data-id");
-            const vehicle = vehicles.find((v) => v.id === vehicleId);
-            if (vehicle) {
-              document.getElementById("vehicleMake").value = vehicle.make;
-              document.getElementById("vehicleModel").value = vehicle.model;
-              document.getElementById(
-                "vehicleRegistration"
-              ).value = vehicle.registration;
-              document.getElementById("projectName").value =
-                vehicle.projectName;
-              document.getElementById("startDate").value = vehicle.startDate;
-              document.getElementById("startTime").value = vehicle.startTime;
-              document.getElementById("endDate").value = vehicle.endDate;
-              document.getElementById("endTime").value = vehicle.endTime;
+            // Show login page if no user is logged in
+            if (!currentUser.email) {
+                loginPage.style.display = "block";
+            } else if (currentUser.role === "admin") {
+                adminPage.style.display = "block";
+            } else if (currentUser.role === "user") {
+                userPage.style.display = "block";
             }
-          });
-        });
+        }
 
-        document.querySelectorAll(".delete-button").forEach((button) => {
-          button.addEventListener("click", function () {
-            const vehicleId = this.getAttribute("data-id");
-            const vehicleIndex = vehicles.findIndex((v) => v.id === vehicleId);
-            if (vehicleIndex !== -1) {
-              vehicles.splice(vehicleIndex, 1);
-              localStorage.setItem("vehicles", JSON.stringify(vehicles));
-              populateAdminVehicleTable();
+        // Login handling
+        const loginForm = document.getElementById("loginForm");
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = { email: user.email, role: user.role };
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                initialize();
+            } else {
+                alert("Invalid credentials. Please try again.");
             }
-          });
-        });
-      }
-
-      // Populate User Vehicle Table
-      function populateUserVehicleTable() {
-        const userVehicleTableBody = document.querySelector(
-          "#userVehicleTable tbody"
-        );
-        userVehicleTableBody.innerHTML = "";
-
-        vehicles.forEach((vehicle) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-          <td>${vehicle.make}</td>
-          <td>${vehicle.model}</td>
-          <td>${vehicle.registration}</td>
-          <td>
-            <button class="request-button" data-id="${vehicle.id}">Request</button>
-          </td>
-        `;
-          userVehicleTableBody.appendChild(row);
         });
 
-        // Event listeners for request buttons
-        document.querySelectorAll(".request-button").forEach((button) => {
-          button.addEventListener("click", function () {
-            const vehicleId = this.getAttribute("data-id");
-            const vehicle = vehicles.find((v) => v.id === vehicleId);
-            if (vehicle) {
-              requests.push({
+        // Logout handling for both Admin and User
+        const logoutButtons = document.querySelectorAll("#logoutButton, #logoutButtonUser");
+        logoutButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                currentUser = { email: "", role: "" };
+                localStorage.removeItem("currentUser");
+                initialize();
+            });
+        });
+
+        // Add Vehicle Handling for Admin
+        const addVehicleForm = document.getElementById("addVehicleForm");
+        addVehicleForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const vehicle = {
                 id: generateId(),
-                vehicle: `${vehicle.make} ${vehicle.model} (${vehicle.registration})`,
-                status: "Pending",
-                assignedDriver: vehicle.driver,
-                startDate: vehicle.startDate,
-                endDate: vehicle.endDate,
-              });
-              localStorage.setItem("requests", JSON.stringify(requests));
-              populateMyRequestsTable();
+                make: document.getElementById("vehicleMake").value.trim(),
+                model: document.getElementById("vehicleModel").value.trim(),
+                registration: document.getElementById("vehicleRegistration").value.trim(),
+                projectName: document.getElementById("projectName").value,
+                startDate: document.getElementById("startDate").value,
+                startTime: document.getElementById("startTime").value,
+                endDate: document.getElementById("endDate").value,
+                endTime: document.getElementById("endTime").value,
+                driver: "",
+                assignedTo: ""
+            };
+            vehicles.push(vehicle);
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+            addVehicleForm.reset();
+            populateAdminVehicleTable();
+        });
+
+        // Generate a unique ID for each vehicle
+        function generateId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Populate Admin Vehicle Table
+        function populateAdminVehicleTable() {
+            const adminVehicleTableBody = document.querySelector("#adminVehicleTable tbody");
+            adminVehicleTableBody.innerHTML = "";
+
+            vehicles.forEach(vehicle => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${vehicle.make}</td>
+                    <td>${vehicle.model}</td>
+                    <td>${vehicle.registration}</td>
+                    <td>${vehicle.projectName}</td>
+                    <td>${vehicle.startDate}</td>
+                    <td>${vehicle.startTime}</td>
+                    <td>${vehicle.endDate}</td>
+                    <td>${vehicle.endTime}</td>
+                    <td>
+                        <select data-vehicle-id="${vehicle.id}" class="driver-select">
+                            <option value="">Select Driver</option>
+                            ${users.filter(u => u.role === "fleetManager").map(u =>
+                                `<option value="${u.email}" ${u.email === vehicle.driver ? "selected" : ""}>${u.email}</option>`
+                            ).join("")}
+                        </select>
+                    </td>
+                    <td>
+                        <select data-vehicle-id="${vehicle.id}" class="assigned-to-select">
+                            <option value="">Select User</option>
+                            ${users.filter(u => u.role === "user").map(u =>
+                                `<option value="${u.email}" ${u.email === vehicle.assignedTo ? "selected" : ""}>${u.email}</option>`
+                            ).join("")}
+                        </select>
+                    </td>
+                    <td>
+                        <button class="deleteVehicleButton" data-vehicle-id="${vehicle.id}">Delete</button>
+                    </td>
+                `;
+                adminVehicleTableBody.appendChild(row);
+            });
+
+            // Add event listeners for the select and delete buttons
+            document.querySelectorAll(".driver-select").forEach(select => {
+                select.addEventListener("change", function () {
+                    const vehicleId = this.getAttribute("data-vehicle-id");
+                    const selectedDriver = this.value;
+                    vehicles = vehicles.map(vehicle => vehicle.id === vehicleId ? { ...vehicle, driver: selectedDriver } : vehicle);
+                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
+                });
+            });
+
+            document.querySelectorAll(".assigned-to-select").forEach(select => {
+                select.addEventListener("change", function () {
+                    const vehicleId = this.getAttribute("data-vehicle-id");
+                    const selectedUser = this.value;
+                    vehicles = vehicles.map(vehicle => vehicle.id === vehicleId ? { ...vehicle, assignedTo: selectedUser } : vehicle);
+                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
+                });
+            });
+
+            document.querySelectorAll(".deleteVehicleButton").forEach(button => {
+                button.addEventListener("click", function () {
+                    const vehicleId = this.getAttribute("data-vehicle-id");
+                    vehicles = vehicles.filter(vehicle => vehicle.id !== vehicleId);
+                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
+                    populateAdminVehicleTable();
+                });
+            });
+        }
+
+        // Initialize jQuery DatePicker for Start and End Date fields
+        $(function () {
+            $("#startDate, #endDate").datepicker({ dateFormat: "dd-mm-yy" });
+        });
+
+        // Load the current user on page load
+        window.addEventListener("load", function () {
+            const savedUser = localStorage.getItem("currentUser");
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
             }
-          });
+            initialize();
+            populateAdminVehicleTable();
         });
-      }
-
-      // Populate My Requests Table
-      function populateMyRequestsTable() {
-        const myRequestsTableBody = document.querySelector(
-          "#myRequestsTable tbody"
-        );
-        myRequestsTableBody.innerHTML = "";
-
-        requests.forEach((request) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-          <td>${request.vehicle}</td>
-          <td>${request.status}</td>
-          <td>${request.assignedDriver}</td>
-          <td>${request.startDate}</td>
-          <td>${request.endDate}</td>
-        `;
-          myRequestsTableBody.appendChild(row);
-        });
-      }
-
-      // Initialize the system
-      initialize();
-
-      // jQuery UI Datepicker
-      $("#startDate, #endDate").datepicker({
-        dateFormat: "dd-mm-yy",
-      });
     </script>
-  </body>
+</body>
 </html>
