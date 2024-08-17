@@ -109,7 +109,11 @@
                 <label for="vehicleRegistration">Registration:</label>
                 <input type="text" id="vehicleRegistration" required>
                 <label for="projectName">Project Name:</label>
-                <input type="text" id="projectName" required>
+                <select id="projectName" required>
+                    <option value="">Select ProjectName</option>
+                    <option value="CUT-TB">CUT-TB</option>
+                    <option value="RISE">RISE</option>
+                </select>
                 <label for="destination">Destination:</label>
                 <input type="text" id="destination" required>
                 <label for="startDate">Start Date:</label>
@@ -120,6 +124,12 @@
                 <input type="text" id="endDate" required>
                 <label for="endTime">End Time:</label>
                 <input type="time" id="endTime" required>
+                <label for="driver">Driver:</label>
+                <select id="driver" required>
+                    <option value="">Select Driver</option>
+                    <option value="Mahloko">Mahloko</option>
+                    <option value="Mokone">Mokone</option>
+                </select>
                 <button type="submit">Add Vehicle</button>
             </form>
 
@@ -136,6 +146,7 @@
                         <th>Start Time</th>
                         <th>End Date</th>
                         <th>End Time</th>
+                        <th>Driver</th>
                         <th>Assigned To</th>
                         <th>Actions</th>
                     </tr>
@@ -151,6 +162,9 @@
         // Initialize system
         const users = [
             { email: "LRankhethoa@jhpiego.org", password: "adminpass", role: "admin" },
+            { email: "TMokitimi@jhpiego.org", password: "password1", role: "user" },
+            { email: "MMatete@jhpiego.org", password: "password2", role: "user" },
+            { email: "TNtelane@jhpiego.org", password: "password3", role: "user" },
             { email: "user@jhpiego.org", password: "userpass", role: "user" }
         ];
         let vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
@@ -211,6 +225,7 @@
                 startTime: document.getElementById("startTime").value,
                 endDate: document.getElementById("endDate").value,
                 endTime: document.getElementById("endTime").value,
+                driver: document.getElementById("driver").value,
                 assignedTo: ""
             };
             vehicles.push(vehicle);
@@ -241,83 +256,41 @@
                     <td>${vehicle.startTime}</td>
                     <td>${vehicle.endDate}</td>
                     <td>${vehicle.endTime}</td>
+                    <td>${vehicle.driver}</td>
+                    <td>${vehicle.assignedTo}</td>
                     <td>
-                        <select data-vehicle-id="${vehicle.id}" class="assigned-to-select">
-                            <option value="">Select User</option>
-                            ${users.filter(u => u.role === "user").map(u =>
-                                `<option value="${u.email}" ${u.email === vehicle.assignedTo ? "selected" : ""}>${u.email}</option>`
-                            ).join("")}
-                        </select>
-                    </td>
-                    <td>
-                        <button class="editVehicleButton" data-vehicle-id="${vehicle.id}">Edit</button>
-                        <button class="deleteVehicleButton" data-vehicle-id="${vehicle.id}">Delete</button>
+                        <button onclick="editVehicle('${vehicle.id}')">Edit</button>
+                        <button onclick="deleteVehicle('${vehicle.id}')">Delete</button>
                     </td>
                 `;
                 vehicleTableBody.appendChild(row);
             });
-
-            // Add event listeners for the select, edit, and delete buttons
-            document.querySelectorAll(".assigned-to-select").forEach(select => {
-                select.addEventListener("change", function () {
-                    const vehicleId = this.getAttribute("data-vehicle-id");
-                    const selectedUser = this.value;
-                    vehicles = vehicles.map(vehicle => vehicle.id === vehicleId ? { ...vehicle, assignedTo: selectedUser } : vehicle);
-                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                });
-            });
-
-            document.querySelectorAll(".editVehicleButton").forEach(button => {
-                button.addEventListener("click", function () {
-                    const vehicleId = this.getAttribute("data-vehicle-id");
-                    editVehicle(vehicleId);
-                });
-            });
-
-            document.querySelectorAll(".deleteVehicleButton").forEach(button => {
-                button.addEventListener("click", function () {
-                    const vehicleId = this.getAttribute("data-vehicle-id");
-                    vehicles = vehicles.filter(vehicle => vehicle.id !== vehicleId);
-                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                    populateVehicleTable();
-                });
-            });
         }
 
-        // Edit Vehicle Function
-        function editVehicle(vehicleId) {
-            const vehicle = vehicles.find(v => v.id === vehicleId);
-            if (vehicle) {
-                document.getElementById("vehicleMake").value = vehicle.make;
-                document.getElementById("vehicleModel").value = vehicle.model;
-                document.getElementById("vehicleRegistration").value = vehicle.registration;
-                document.getElementById("projectName").value = vehicle.projectName;
-                document.getElementById("destination").value = vehicle.destination;
-                document.getElementById("startDate").value = vehicle.startDate;
-                document.getElementById("startTime").value = vehicle.startTime;
-                document.getElementById("endDate").value = vehicle.endDate;
-                document.getElementById("endTime").value = vehicle.endTime;
-
-                vehicles = vehicles.filter(v => v.id !== vehicleId); // Remove the vehicle from the list temporarily
-                localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                populateVehicleTable();
-            }
+        // Edit Vehicle
+        function editVehicle(id) {
+            // Implementation of edit functionality
         }
 
-        // Initialize jQuery DatePicker
-        $(function () {
-            $("#startDate, #endDate").datepicker({ dateFormat: "dd-mm-yy" });
-        });
-
-        // Initialize the app
-        document.addEventListener("DOMContentLoaded", function () {
-            const storedUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (storedUser) {
-                currentUser = storedUser;
-            }
-            initialize();
+        // Delete Vehicle
+        function deleteVehicle(id) {
+            vehicles = vehicles.filter(vehicle => vehicle.id !== id);
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
             populateVehicleTable();
+        }
+
+        // Datepicker for Start Date and End Date
+        $(function () {
+            $("#startDate, #endDate").datepicker({
+                dateFormat: "dd-mm-yy"
+            });
         });
+
+        // Initialize the system
+        initialize();
+
+        // Populate vehicle table on page load
+        populateVehicleTable();
     </script>
-</body>
+  </body>
 </html>
