@@ -129,6 +129,13 @@
             <option value="RISE">RISE</option>
             <option value="MATRIX">MATRIX</option>
           </select>
+          />
+          <input
+            type="text"
+            id="Destination"
+            placeholder="Vehicle Destination
+            required
+          />
           <input type="date" id="startDate" placeholder="Start Date" required />
           <input type="time" id="startTime" placeholder="Start Time" required />
           <input type="date" id="endDate" placeholder="End Date" required />
@@ -147,6 +154,7 @@
               <th>Model</th>
               <th>Registration</th>
               <th>Project</th>
+              <th>Destination</th>
               <th>Start Date</th>
               <th>Start Time</th>
               <th>End Date</th>
@@ -174,6 +182,8 @@
               <th>Make</th>
               <th>Model</th>
               <th>Registration</th>
+              <th>Project</th>
+              <th>Destination</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -191,6 +201,7 @@
             <tr>
               <th>Vehicle</th>
               <th>Status</th>
+              <th>project</th>
               <th>Assigned Driver</th>
               <th>Start Date</th>
               <th>End Date</th>
@@ -310,6 +321,7 @@
           model: vehicleModel,
           registration: vehicleRegistration,
           project: projectName,
+          destination: Destination
           startDate: startDate,
           startTime: startTime,
           endDate: endDate,
@@ -339,6 +351,7 @@
           <td>${vehicle.model}</td>
           <td>${vehicle.registration}</td>
           <td>${vehicle.project}</td>
+          <td>${vehicle.destination}<td>
           <td>${vehicle.startDate}</td>
           <td>${vehicle.startTime}</td>
           <td>${vehicle.endDate}</td>
@@ -412,6 +425,7 @@
             document.getElementById("vehicleRegistration").value =
               vehicle.registration;
             document.getElementById("projectName").value = vehicle.project;
+            document.getElementById("Destination").value = vehicle.destination;
             document.getElementById("startDate").value = vehicle.startDate;
             document.getElementById("startTime").value = vehicle.startTime;
             document.getElementById("endDate").value = vehicle.endDate;
