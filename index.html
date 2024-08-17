@@ -121,6 +121,12 @@
             id="vehicleRegistration"
             placeholder="Vehicle Registration"
             required
+            />
+          <input
+            type="text"
+            id="vehicleDestination"
+            placeholder="Vehicle Destination"
+            required
           />
           <select id="projectName" required>
             <option value="" disabled selected> Select Project</option>
@@ -146,6 +152,7 @@
               <th>Make</th>
               <th>Model</th>
               <th>Registration</th>
+              <th>Destination</th>
               <th>Project</th>
               <th>Start Date</th>
               <th>Start Time</th>
@@ -174,6 +181,7 @@
               <th>Make</th>
               <th>Model</th>
               <th>Registration</th>
+              <th>Destination</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -306,6 +314,10 @@
           registrationCell.textContent = vehicle.registration;
           row.appendChild(registrationCell);
 
+          const registrationCell = document.createElement("td");
+          destinationCell.textContent = vehicle.destination;
+          row.appendChild(destinationCell);
+
           const projectCell = document.createElement("td");
           projectCell.textContent = vehicle.project;
           row.appendChild(projectCell);
@@ -405,6 +417,10 @@
           registrationCell.textContent = vehicle.registration;
           row.appendChild(registrationCell);
 
+          const registrationCell = document.createElement("td");
+          destinationCell.textContent = vehicle.destination;
+          row.appendChild(destinationCell);
+
           const actionsCell = document.createElement("td");
           const requestButton = document.createElement("button");
           requestButton.textContent = "Request";
@@ -464,6 +480,7 @@
           make: document.getElementById("vehicleMake").value,
           model: document.getElementById("vehicleModel").value,
           registration: document.getElementById("vehicleRegistration").value,
+          destination: document.getElementById("vehicleDestination").value,
           project: document.getElementById("projectName").value,
           startDate: document.getElementById("startDate").value,
           startTime: document.getElementById("startTime").value,
@@ -489,6 +506,7 @@
           vehicleMake: vehicle.make,
           vehicleModel: vehicle.model,
           vehicleRegistration: vehicle.registration,
+          vehicleDestination: vehicle.destination,
           status: "Pending",
           startDate: vehicle.startDate,
           endDate: vehicle.endDate,
@@ -505,6 +523,7 @@
         document.getElementById("vehicleMake").value = vehicle.make;
         document.getElementById("vehicleModel").value = vehicle.model;
         document.getElementById("vehicleRegistration").value = vehicle.registration;
+        document.getElementById("vehicleDestination").value = vehicle.destination;
         document.getElementById("projectName").value = vehicle.project;
         document.getElementById("startDate").value = vehicle.startDate;
         document.getElementById("startTime").value = vehicle.startTime;
