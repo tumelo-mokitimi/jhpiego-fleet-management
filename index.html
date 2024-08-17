@@ -122,23 +122,17 @@
             placeholder="Vehicle Registration"
             required
           />
-          <input
-            type="text"
-            id="vehicleDestination"
-            placeholder="Vehicle Destination"
-            required
-          />
           <select id="projectName" required>
-            <option value="" disabled selected>Select Project</option>
+            <option value="" disabled selected> Select Project</option>
             <option value="CUT-TB">CUT-TB</option>
             <option value="MOSAIC">MOSAIC</option>
             <option value="RISE">RISE</option>
             <option value="MATRIX">MATRIX</option>
           </select>
-          <input type="date" id="startDate" required />
-          <input type="time" id="startTime" required />
-          <input type="date" id="endDate" required />
-          <input type="time" id="endTime" required />
+          <input type="date" id="startDate" placeholder="Start Date" required />
+          <input type="time" id="startTime" placeholder="Start Time" required />
+          <input type="date" id="endDate" placeholder="End Date" required />
+          <input type="time" id="endTime" placeholder="End Time" required />
           <button type="submit">Add Vehicle</button>
         </form>
       </div>
@@ -152,7 +146,6 @@
               <th>Make</th>
               <th>Model</th>
               <th>Registration</th>
-              <th>Destination</th>
               <th>Project</th>
               <th>Start Date</th>
               <th>Start Time</th>
@@ -181,7 +174,6 @@
               <th>Make</th>
               <th>Model</th>
               <th>Registration</th>
-              <th>Destination</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -218,17 +210,17 @@
       const vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
       const requests = JSON.parse(localStorage.getItem("requests")) || [];
       const users = [
-    {email: "TMokitimi@jhpiego.org", password: "adminpass", role: "admin" },
-    { email: "MMatete@jhpiego.org", password: "userpass", role: "user" },
-    { email: "TNtelane@jhpiego.org", password: "userpass", role: "user" },
-    { email: "SMpalami@jhpiego.org", password: "userpass", role: "user" },
-    { email: "MShoba@jhpiego.org", password: "userpass", role: "user" },
-    { email: "TMolapo@jhpiego.org", password: "userpass", role: "user" },
-    { email: "RSoothoane@jhpiego.org", password: "userpass", role: "user" },
-    { email: "PMoshoeshoe@jhpiego.org", password: "userpass", role: "user" },
-    { email: "MTuoane@jhpiego.org", password: "userpass", role: "user" },
-    { email: "MNkongoane@jhpiego.org", password: "userpass", role: "user" },
-    { email: "fleetmanager@jhpiego.org", password: "fleetpass", role: "fleetmanager" },
+        { email: "TMokitimi@jhpiego.org", role: "user" },
+        { email: "MMatete@jhpiego.org", role: "user" },
+        { email: "TNtelane@jhpiego.org", role: "user" },
+        { email: "SMpalami@jhpiego.org", role: "user" },
+        { email: "MShoba@jhpiego.org", role: "user" },
+        { email: "TMolapo@jhpiego.org", role: "user" },
+        { email: "RSoothoane@jhpiego.org", role: "user" },
+        { email: "PMoshoeshoe@jhpiego.org", role: "user" },
+        { email: "MTuoane@jhpiego.org", role: "user" },
+        { email: "MNkongoane@jhpiego.org", role: "user" },
+        { email: "fleetmanager@jhpiego.org", role: "fleetManager" },
       ];
       let currentUser = { email: "", role: "" };
 
@@ -253,167 +245,289 @@
       loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
         const emailInput = document.getElementById("email").value.trim();
-        const passwordInput = document.getElementById("password").value;
+        const passwordInput = document.getElementById("password").value.trim();
 
-        // Simple validation
-        if (emailInput === "" || passwordInput === "") {
-          alert("Please fill in all fields");
+        if (!emailInput.endsWith("@jhpiego.org")) {
+          alert("Only @jhpiego.org emails are allowed.");
           return;
         }
 
-        currentUser = users.find(user => user.email === emailInput);
+        currentUser.email = emailInput;
+        const user = users.find((u) => u.email === emailInput);
 
-        if (currentUser) {
-          loginForm.classList.add("hidden");
-          if (currentUser.role === "admin") {
-            adminSection.classList.remove("hidden");
-          } else {
-            userSection.classList.remove("hidden");
-          }
-          logoutButton.classList.remove("hidden");
-        } else {
-          alert("Invalid email or password");
+        if (!user || passwordInput !== "password") {
+          alert("Invalid credentials.");
+          return;
         }
+
+        currentUser.role = user.role;
+        if (currentUser.role === "fleetManager") {
+          adminSection.classList.remove("hidden");
+          userSection.classList.add("hidden");
+          populateAdminVehicleTable();
+        } else {
+          userSection.classList.remove("hidden");
+          adminSection.classList.add("hidden");
+          populateUserVehicleTable();
+          populateMyRequestsTable();
+        }
+
+        loginForm.classList.add("hidden");
+        logoutButton.classList.remove("hidden");
       });
 
+      // Logout Handling
       logoutButton.addEventListener("click", function () {
+        currentUser = { email: "", role: "" };
+        loginForm.reset();
         loginForm.classList.remove("hidden");
         adminSection.classList.add("hidden");
         userSection.classList.add("hidden");
         logoutButton.classList.add("hidden");
-        currentUser = { email: "", role: "" };
       });
 
-      // Populate Vehicle Tables
+      // Populate Admin Vehicle Table
       function populateAdminVehicleTable() {
         const tableBody = document.querySelector("#adminVehicleTable tbody");
         tableBody.innerHTML = "";
-        vehicles.forEach((vehicle) => {
+
+        vehicles.forEach((vehicle, index) => {
           const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${vehicle.make}</td>
-            <td>${vehicle.model}</td>
-            <td>${vehicle.registration}</td>
-            <td>${vehicle.destination}</td>
-            <td>${vehicle.project}</td>
-            <td>${vehicle.startDate}</td>
-            <td>${vehicle.startTime}</td>
-            <td>${vehicle.endDate}</td>
-            <td>${vehicle.endTime}</td>
-            <td>${vehicle.driver || "Not Assigned"}</td>
-            <td>${vehicle.assignedTo || "Not Assigned"}</td>
-            <td>
-              <button onclick="editVehicle('${vehicle.id}')">Edit</button>
-              <button onclick="deleteVehicle('${vehicle.id}')">Delete</button>
-            </td>
-          `;
+
+          const makeCell = document.createElement("td");
+          makeCell.textContent = vehicle.make;
+          row.appendChild(makeCell);
+
+          const modelCell = document.createElement("td");
+          modelCell.textContent = vehicle.model;
+          row.appendChild(modelCell);
+
+          const registrationCell = document.createElement("td");
+          registrationCell.textContent = vehicle.registration;
+          row.appendChild(registrationCell);
+
+          const projectCell = document.createElement("td");
+          projectCell.textContent = vehicle.project;
+          row.appendChild(projectCell);
+
+          const startDateCell = document.createElement("td");
+          startDateCell.textContent = vehicle.startDate;
+          row.appendChild(startDateCell);
+
+          const startTimeCell = document.createElement("td");
+          startTimeCell.textContent = vehicle.startTime;
+          row.appendChild(startTimeCell);
+
+          const endDateCell = document.createElement("td");
+          endDateCell.textContent = vehicle.endDate;
+          row.appendChild(endDateCell);
+
+          const endTimeCell = document.createElement("td");
+          endTimeCell.textContent = vehicle.endTime;
+          row.appendChild(endTimeCell);
+
+          const driverCell = document.createElement("td");
+          const driverSelect = document.createElement("select");
+
+          ["", "Driver 1", "Driver 2", "Driver 3"].forEach((driver) => {
+            const option = document.createElement("option");
+            option.value = driver;
+            option.textContent = driver;
+            driverSelect.appendChild(option);
+          });
+
+          driverSelect.value = vehicle.driver || "";
+          driverSelect.addEventListener("change", function () {
+            vehicles[index].driver = driverSelect.value;
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+          });
+
+          driverCell.appendChild(driverSelect);
+          row.appendChild(driverCell);
+
+          const assignedToCell = document.createElement("td");
+          const assignedToSelect = document.createElement("select");
+
+          users.forEach((user) => {
+            const option = document.createElement("option");
+            option.value = user.email;
+            option.textContent = user.email;
+            assignedToSelect.appendChild(option);
+          });
+
+          assignedToSelect.value = vehicle.assignedTo || "";
+          assignedToSelect.addEventListener("change", function () {
+            vehicles[index].assignedTo = assignedToSelect.value;
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+          });
+
+          assignedToCell.appendChild(assignedToSelect);
+          row.appendChild(assignedToCell);
+
+          const actionsCell = document.createElement("td");
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit";
+          editButton.addEventListener("click", function () {
+            editVehicle(index);
+          });
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.addEventListener("click", function () {
+            deleteVehicle(index);
+          });
+
+          actionsCell.appendChild(editButton);
+          actionsCell.appendChild(deleteButton);
+          row.appendChild(actionsCell);
+
           tableBody.appendChild(row);
         });
       }
 
+      // Populate User Vehicle Table
       function populateUserVehicleTable() {
         const tableBody = document.querySelector("#userVehicleTable tbody");
         tableBody.innerHTML = "";
-        vehicles.forEach((vehicle) => {
+
+        vehicles.forEach((vehicle, index) => {
           const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${vehicle.make}</td>
-            <td>${vehicle.model}</td>
-            <td>${vehicle.registration}</td>
-            <td>${vehicle.destination}</td>
-            <td>
-              <button onclick="requestVehicle('${vehicle.id}')">Request</button>
-            </td>
-          `;
+
+          const makeCell = document.createElement("td");
+          makeCell.textContent = vehicle.make;
+          row.appendChild(makeCell);
+
+          const modelCell = document.createElement("td");
+          modelCell.textContent = vehicle.model;
+          row.appendChild(modelCell);
+
+          const registrationCell = document.createElement("td");
+          registrationCell.textContent = vehicle.registration;
+          row.appendChild(registrationCell);
+
+          const actionsCell = document.createElement("td");
+          const requestButton = document.createElement("button");
+          requestButton.textContent = "Request";
+          requestButton.addEventListener("click", function () {
+            requestVehicle(index);
+          });
+
+          actionsCell.appendChild(requestButton);
+          row.appendChild(actionsCell);
+
           tableBody.appendChild(row);
         });
       }
 
+      // Populate My Requests Table
       function populateMyRequestsTable() {
         const tableBody = document.querySelector("#myRequestsTable tbody");
         tableBody.innerHTML = "";
-        requests
-          .filter(request => request.userEmail === currentUser.email)
-          .forEach((request) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${request.vehicleId}</td>
-              <td>${request.status}</td>
-              <td>${request.driver || "Not Assigned"}</td>
-              <td>${request.startDate}</td>
-              <td>${request.endDate}</td>
-            `;
-            tableBody.appendChild(row);
-          });
+
+        requests.forEach((request) => {
+          if (request.userEmail !== currentUser.email) return;
+
+          const row = document.createElement("tr");
+
+          const vehicleCell = document.createElement("td");
+          vehicleCell.textContent = `${request.vehicleMake} ${request.vehicleModel}`;
+          row.appendChild(vehicleCell);
+
+          const statusCell = document.createElement("td");
+          statusCell.textContent = request.status;
+          row.appendChild(statusCell);
+
+          const assignedDriverCell = document.createElement("td");
+          assignedDriverCell.textContent = request.assignedDriver || "Pending";
+          row.appendChild(assignedDriverCell);
+
+          const startDateCell = document.createElement("td");
+          startDateCell.textContent = request.startDate;
+          row.appendChild(startDateCell);
+
+          const endDateCell = document.createElement("td");
+          endDateCell.textContent = request.endDate;
+          row.appendChild(endDateCell);
+
+          tableBody.appendChild(row);
+        });
       }
 
-      // Add Vehicle Handling
+      // Add New Vehicle
       const addVehicleForm = document.getElementById("addVehicleForm");
+
       addVehicleForm.addEventListener("submit", function (event) {
         event.preventDefault();
-        const vehicle = {
+
+        const newVehicle = {
           id: generateId(),
           make: document.getElementById("vehicleMake").value,
           model: document.getElementById("vehicleModel").value,
           registration: document.getElementById("vehicleRegistration").value,
-          destination: document.getElementById("vehicleDestination").value,
           project: document.getElementById("projectName").value,
           startDate: document.getElementById("startDate").value,
           startTime: document.getElementById("startTime").value,
           endDate: document.getElementById("endDate").value,
           endTime: document.getElementById("endTime").value,
+          driver: "",
+          assignedTo: "",
         };
-        vehicles.push(vehicle);
+
+        vehicles.push(newVehicle);
         localStorage.setItem("vehicles", JSON.stringify(vehicles));
-        populateAdminVehicleTable();
+
         addVehicleForm.reset();
+        populateAdminVehicleTable();
       });
 
-      // Edit Vehicle Handling
-      function editVehicle(id) {
-        const vehicle = vehicles.find(v => v.id === id);
-        if (vehicle) {
-          document.getElementById("vehicleMake").value = vehicle.make;
-          document.getElementById("vehicleModel").value = vehicle.model;
-          document.getElementById("vehicleRegistration").value = vehicle.registration;
-          document.getElementById("vehicleDestination").value = vehicle.destination;
-          document.getElementById("projectName").value = vehicle.project;
-          document.getElementById("startDate").value = vehicle.startDate;
-          document.getElementById("startTime").value = vehicle.startTime;
-          document.getElementById("endDate").value = vehicle.endDate;
-          document.getElementById("endTime").value = vehicle.endTime;
-          vehicles = vehicles.filter(v => v.id !== id);
-          localStorage.setItem("vehicles", JSON.stringify(vehicles));
-          populateAdminVehicleTable();
-        }
-      }
-
-      // Delete Vehicle Handling
-      function deleteVehicle(id) {
-        vehicles = vehicles.filter(vehicle => vehicle.id !== id);
-        localStorage.setItem("vehicles", JSON.stringify(vehicles));
-        populateAdminVehicleTable();
-      }
-
-      // Request Vehicle Handling
-      function requestVehicle(vehicleId) {
-        const request = {
-          vehicleId,
+      // Request Vehicle
+      function requestVehicle(vehicleIndex) {
+        const vehicle = vehicles[vehicleIndex];
+        const newRequest = {
+          id: generateId(),
           userEmail: currentUser.email,
+          vehicleMake: vehicle.make,
+          vehicleModel: vehicle.model,
+          vehicleRegistration: vehicle.registration,
           status: "Pending",
-          startDate: document.getElementById("startDate").value,
-          endDate: document.getElementById("endDate").value,
+          startDate: vehicle.startDate,
+          endDate: vehicle.endDate,
         };
-        requests.push(request);
+
+        requests.push(newRequest);
         localStorage.setItem("requests", JSON.stringify(requests));
         populateMyRequestsTable();
       }
 
-      // Initialize on page load
-      $(document).ready(function () {
-        initialize();
-        $("#startDate, #endDate").datepicker({ dateFormat: "dd-mm-yy" });
+      // Edit Vehicle
+      function editVehicle(vehicleIndex) {
+        const vehicle = vehicles[vehicleIndex];
+        document.getElementById("vehicleMake").value = vehicle.make;
+        document.getElementById("vehicleModel").value = vehicle.model;
+        document.getElementById("vehicleRegistration").value = vehicle.registration;
+        document.getElementById("projectName").value = vehicle.project;
+        document.getElementById("startDate").value = vehicle.startDate;
+        document.getElementById("startTime").value = vehicle.startTime;
+        document.getElementById("endDate").value = vehicle.endDate;
+        document.getElementById("endTime").value = vehicle.endTime;
+
+        vehicles.splice(vehicleIndex, 1);
+        populateAdminVehicleTable();
+      }
+
+      // Delete Vehicle
+      function deleteVehicle(vehicleIndex) {
+        vehicles.splice(vehicleIndex, 1);
+        localStorage.setItem("vehicles", JSON.stringify(vehicles));
+        populateAdminVehicleTable();
+      }
+
+      $(function () {
+        $("#startDate").datepicker();
+        $("#endDate").datepicker();
       });
+
+      initialize();
     </script>
   </body>
 </html>
