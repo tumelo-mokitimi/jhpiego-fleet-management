@@ -218,17 +218,17 @@
       const vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
       const requests = JSON.parse(localStorage.getItem("requests")) || [];
       const users = [
-        { email: "TMokitimi@jhpiego.org", role: "user" },
-        { email: "MMatete@jhpiego.org", role: "user" },
-        { email: "TNtelane@jhpiego.org", role: "user" },
-        { email: "SMpalami@jhpiego.org", role: "user" },
-        { email: "MShoba@jhpiego.org", role: "user" },
-        { email: "TMolapo@jhpiego.org", role: "user" },
-        { email: "RSoothoane@jhpiego.org", role: "user" },
-        { email: "PMoshoeshoe@jhpiego.org", role: "user" },
-        { email: "MTuoane@jhpiego.org", role: "user" },
-        { email: "MNkongoane@jhpiego.org", role: "user" },
-        { email: "fleetmanager@jhpiego.org", role: "fleetManager" },
+    {email: "TMokitimi@jhpiego.org", password: "adminpass", role: "admin" },
+    { email: "MMatete@jhpiego.org", password: "userpass", role: "user" },
+    { email: "TNtelane@jhpiego.org", password: "userpass", role: "user" },
+    { email: "SMpalami@jhpiego.org", password: "userpass", role: "user" },
+    { email: "MShoba@jhpiego.org", password: "userpass", role: "user" },
+    { email: "TMolapo@jhpiego.org", password: "userpass", role: "user" },
+    { email: "RSoothoane@jhpiego.org", password: "userpass", role: "user" },
+    { email: "PMoshoeshoe@jhpiego.org", password: "userpass", role: "user" },
+    { email: "MTuoane@jhpiego.org", password: "userpass", role: "user" },
+    { email: "MNkongoane@jhpiego.org", password: "userpass", role: "user" },
+    { email: "fleetmanager@jhpiego.org", password: "fleetpass", role: "fleetmanager" },
       ];
       let currentUser = { email: "", role: "" };
 
