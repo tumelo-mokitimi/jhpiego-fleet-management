@@ -1,23 +1,92 @@
+e full code with the updates:
+
+html
+Copy code
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Management System</title>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jhpiego Vehicle Management System</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .hidden {
-            display: none;
-        }
-        #loginPage, #adminPage, #userPage {
-            display: none;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+      }
+      .header img {
+        width: auto;
+        height: auto;
+        margin-right: 35px;
+      }
+      .header h1 {
+        margin: 0;
+        color: #000000;
+      }
+      form,
+      .section {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border-radius: 25px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      button,
+      select {
+        margin: 5px 0;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #efefef;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+      button {
+        background-color: #016a63;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #039b91;
+      }
+      .button-group button {
+        width: auto;
+        margin-right: 5px;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+  </head>
+  <body>
+    <div class="header">
+      <img src="jhpiego_logo.png" alt="Jhpiego Logo" />
+      <h1>Jhpiego Vehicle Management System</h1>
+    </div>
     <!-- Login Page -->
     <div id="loginPage">
         <h2>Login</h2>
@@ -30,11 +99,11 @@
         </form>
     </div>
 
-    <!-- Admin Page -->
-    <div id="adminPage">
-        <h2>Admin Dashboard</h2>
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <h2>Dashboard</h2>
         <button id="logoutButton">Logout</button>
-        <div id="adminSection">
+        <div id="vehicleSection">
             <h3>Add Vehicle</h3>
             <form id="addVehicleForm">
                 <label for="vehicleMake">Make:</label>
@@ -45,6 +114,8 @@
                 <input type="text" id="vehicleRegistration" required>
                 <label for="projectName">Project Name:</label>
                 <input type="text" id="projectName" required>
+                <label for="destination">Destination:</label>
+                <input type="text" id="destination" required>
                 <label for="startDate">Start Date:</label>
                 <input type="text" id="startDate" required>
                 <label for="startTime">Start Time:</label>
@@ -57,54 +128,20 @@
             </form>
 
             <h3>Vehicle List</h3>
-            <table id="adminVehicleTable">
+            <table id="vehicleTable">
                 <thead>
                     <tr>
                         <th>Make</th>
                         <th>Model</th>
                         <th>Registration</th>
                         <th>Project Name</th>
+                        <th>Destination</th>
                         <th>Start Date</th>
                         <th>Start Time</th>
                         <th>End Date</th>
                         <th>End Time</th>
-                        <th>Driver</th>
                         <th>Assigned To</th>
                         <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- User Page -->
-    <div id="userPage">
-        <h2>User Dashboard</h2>
-        <button id="logoutButtonUser">Logout</button>
-        <div id="userSection">
-            <h3>Available Vehicles</h3>
-            <table id="userVehicleTable">
-                <thead>
-                    <tr>
-                        <th>Make</th>
-                        <th>Model</th>
-                        <th>Registration</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <h3>My Requests</h3>
-            <table id="myRequestsTable">
-                <thead>
-                    <tr>
-                        <th>Vehicle</th>
-                        <th>Status</th>
-                        <th>Assigned Driver</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -117,30 +154,25 @@
     <script>
         // Initialize system
         const users = [
-            { email: "TMokitimi@jhpiego.org", password: "password123", role: "admin" },
+            { email: "LRankhethoa@jhpiego.org", password: "adminpass", role: "admin" },
             { email: "user@jhpiego.org", password: "userpass", role: "user" }
         ];
         let vehicles = JSON.parse(localStorage.getItem("vehicles")) || [];
-        let requests = JSON.parse(localStorage.getItem("requests")) || [];
         let currentUser = { email: "", role: "" };
 
         function initialize() {
             const loginPage = document.getElementById("loginPage");
-            const adminPage = document.getElementById("adminPage");
-            const userPage = document.getElementById("userPage");
+            const dashboard = document.getElementById("dashboard");
 
             // Hide all pages initially
             loginPage.style.display = "none";
-            adminPage.style.display = "none";
-            userPage.style.display = "none";
+            dashboard.style.display = "none";
 
             // Show login page if no user is logged in
             if (!currentUser.email) {
                 loginPage.style.display = "block";
-            } else if (currentUser.role === "admin") {
-                adminPage.style.display = "block";
-            } else if (currentUser.role === "user") {
-                userPage.style.display = "block";
+            } else {
+                dashboard.style.display = "block";
             }
         }
 
@@ -160,17 +192,15 @@
             }
         });
 
-        // Logout handling for both Admin and User
-        const logoutButtons = document.querySelectorAll("#logoutButton, #logoutButtonUser");
-        logoutButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                currentUser = { email: "", role: "" };
-                localStorage.removeItem("currentUser");
-                initialize();
-            });
+        // Logout handling
+        const logoutButton = document.getElementById("logoutButton");
+        logoutButton.addEventListener("click", function () {
+            currentUser = { email: "", role: "" };
+            localStorage.removeItem("currentUser");
+            initialize();
         });
 
-        // Add Vehicle Handling for Admin
+        // Add Vehicle Handling
         const addVehicleForm = document.getElementById("addVehicleForm");
         addVehicleForm.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -179,18 +209,18 @@
                 make: document.getElementById("vehicleMake").value.trim(),
                 model: document.getElementById("vehicleModel").value.trim(),
                 registration: document.getElementById("vehicleRegistration").value.trim(),
-                projectName: document.getElementById("projectName").value,
+                projectName: document.getElementById("projectName").value.trim(),
+                destination: document.getElementById("destination").value.trim(),
                 startDate: document.getElementById("startDate").value,
                 startTime: document.getElementById("startTime").value,
                 endDate: document.getElementById("endDate").value,
                 endTime: document.getElementById("endTime").value,
-                driver: "",
                 assignedTo: ""
             };
             vehicles.push(vehicle);
             localStorage.setItem("vehicles", JSON.stringify(vehicles));
             addVehicleForm.reset();
-            populateAdminVehicleTable();
+            populateVehicleTable();
         });
 
         // Generate a unique ID for each vehicle
@@ -198,10 +228,10 @@
             return '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // Populate Admin Vehicle Table
-        function populateAdminVehicleTable() {
-            const adminVehicleTableBody = document.querySelector("#adminVehicleTable tbody");
-            adminVehicleTableBody.innerHTML = "";
+        // Populate Vehicle Table
+        function populateVehicleTable() {
+            const vehicleTableBody = document.querySelector("#vehicleTable tbody");
+            vehicleTableBody.innerHTML = "";
 
             vehicles.forEach(vehicle => {
                 const row = document.createElement("tr");
@@ -210,18 +240,11 @@
                     <td>${vehicle.model}</td>
                     <td>${vehicle.registration}</td>
                     <td>${vehicle.projectName}</td>
+                    <td>${vehicle.destination}</td>
                     <td>${vehicle.startDate}</td>
                     <td>${vehicle.startTime}</td>
                     <td>${vehicle.endDate}</td>
                     <td>${vehicle.endTime}</td>
-                    <td>
-                        <select data-vehicle-id="${vehicle.id}" class="driver-select">
-                            <option value="">Select Driver</option>
-                            ${users.filter(u => u.role === "fleetManager").map(u =>
-                                `<option value="${u.email}" ${u.email === vehicle.driver ? "selected" : ""}>${u.email}</option>`
-                            ).join("")}
-                        </select>
-                    </td>
                     <td>
                         <select data-vehicle-id="${vehicle.id}" class="assigned-to-select">
                             <option value="">Select User</option>
@@ -231,22 +254,14 @@
                         </select>
                     </td>
                     <td>
+                        <button class="editVehicleButton" data-vehicle-id="${vehicle.id}">Edit</button>
                         <button class="deleteVehicleButton" data-vehicle-id="${vehicle.id}">Delete</button>
                     </td>
                 `;
-                adminVehicleTableBody.appendChild(row);
+                vehicleTableBody.appendChild(row);
             });
 
-            // Add event listeners for the select and delete buttons
-            document.querySelectorAll(".driver-select").forEach(select => {
-                select.addEventListener("change", function () {
-                    const vehicleId = this.getAttribute("data-vehicle-id");
-                    const selectedDriver = this.value;
-                    vehicles = vehicles.map(vehicle => vehicle.id === vehicleId ? { ...vehicle, driver: selectedDriver } : vehicle);
-                    localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                });
-            });
-
+            // Add event listeners for the select, edit, and delete buttons
             document.querySelectorAll(".assigned-to-select").forEach(select => {
                 select.addEventListener("change", function () {
                     const vehicleId = this.getAttribute("data-vehicle-id");
@@ -256,29 +271,56 @@
                 });
             });
 
+            document.querySelectorAll(".editVehicleButton").forEach(button => {
+                button.addEventListener("click", function () {
+                    const vehicleId = this.getAttribute("data-vehicle-id");
+                    editVehicle(vehicleId);
+                });
+            });
+
             document.querySelectorAll(".deleteVehicleButton").forEach(button => {
                 button.addEventListener("click", function () {
                     const vehicleId = this.getAttribute("data-vehicle-id");
                     vehicles = vehicles.filter(vehicle => vehicle.id !== vehicleId);
                     localStorage.setItem("vehicles", JSON.stringify(vehicles));
-                    populateAdminVehicleTable();
+                    populateVehicleTable();
                 });
             });
         }
 
-        // Initialize jQuery DatePicker for Start and End Date fields
+        // Edit Vehicle Function
+        function editVehicle(vehicleId) {
+            const vehicle = vehicles.find(v => v.id === vehicleId);
+            if (vehicle) {
+                document.getElementById("vehicleMake").value = vehicle.make;
+                document.getElementById("vehicleModel").value = vehicle.model;
+                document.getElementById("vehicleRegistration").value = vehicle.registration;
+                document.getElementById("projectName").value = vehicle.projectName;
+                document.getElementById("destination").value = vehicle.destination;
+                document.getElementById("startDate").value = vehicle.startDate;
+                document.getElementById("startTime").value = vehicle.startTime;
+                document.getElementById("endDate").value = vehicle.endDate;
+                document.getElementById("endTime").value = vehicle.endTime;
+
+                vehicles = vehicles.filter(v => v.id !== vehicleId); // Remove the vehicle from the list temporarily
+                localStorage.setItem("vehicles", JSON.stringify(vehicles));
+                populateVehicleTable();
+            }
+        }
+
+        // Initialize jQuery DatePicker
         $(function () {
             $("#startDate, #endDate").datepicker({ dateFormat: "dd-mm-yy" });
         });
 
-        // Load the current user on page load
-        window.addEventListener("load", function () {
-            const savedUser = localStorage.getItem("currentUser");
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
+        // Initialize the app
+        document.addEventListener("DOMContentLoaded", function () {
+            const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (storedUser) {
+                currentUser = storedUser;
             }
             initialize();
-            populateAdminVehicleTable();
+            populateVehicleTable();
         });
     </script>
 </body>
